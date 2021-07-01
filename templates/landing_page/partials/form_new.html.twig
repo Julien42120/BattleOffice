@@ -1,0 +1,222 @@
+<style type="text/css">
+	.form-error {
+		color: red;
+		font-weight: bold;
+		padding-bottom: 10px;
+	}
+	.form-error ul {
+		margin: 0;
+	}
+</style>
+
+{# Etape 2 #}
+
+{{ form_start(form) }}
+
+<div class="card step_2">
+	<div class="card-content">
+		<span class="card-title color_product_primary center-align">Étape 2</span>
+		<p class="h6 center-align">Remplissez ce formulaire</p>
+		<div class="form-wrapper">
+			<div class="input-field">
+				{{ form_widget(form.firstName) }}
+				{{ form_label(form.firstName, 'firstName', {
+                    'label_attr': {'class': 'firstName'}
+                }) }}
+				<div class="form-error"></div>
+			</div>
+			<div class="input-field">
+				{{ form_widget(form.lastName) }}
+				{{ form_label(form.lastName, 'lastName', {
+                    'label_attr': {'class': 'lastName'}
+                }) }}
+				<div class="form-error"></div>
+			</div>
+			<div class="input-field">
+				{{ form_widget(form.adress) }}
+				{{ form_label(form.adress, 'adress', {
+                    'label_attr': {'class': 'adress'}
+                }) }}
+				<div class="form-error"></div>
+			</div>
+			<div class="input-field">
+				{{ form_widget(form.otherAdress) }}
+				{{ form_label(form.otherAdress, 'otherAdress', {
+                    'label_attr': {'class': 'otherAdress'}
+                }) }}
+				<div class="form-error"></div>
+			</div>
+			<div class="input-field">
+				{{ form_widget(form.city) }}
+				{{ form_label(form.city, 'city', {
+                    'label_attr': {'class': 'city'}
+                }) }}
+				<div class="form-error"></div>
+			</div>
+			<div class="input-field">
+				{{ form_widget(form.postalCode) }}
+				{{ form_label(form.postalCode, 'postalCode', {
+                    'label_attr': {'class': 'postalCode'}
+                }) }}
+				<div class="form-error"></div>
+			</div>
+			<div class="input-field">
+				{{ form_widget(form.country) }}
+				{{ form_label(form.country, 'country', {
+                    'label_attr': {'class': 'country'}
+                }) }}
+				<label>Pays</label>
+				<div class="form-error"></div>
+			</div>
+			<div class="input-field">
+				{{ form_widget(form.phone) }}
+				{{ form_label(form.phone, 'phone', {
+                    'label_attr': {'class': 'phone'}
+                }) }}
+				<div class="form-error"></div>
+			</div>
+			<div class="input-field">
+				{{ form_widget(form.mail) }}
+				{{ form_label(form.mail, 'mail', {
+                    'label_attr': {'class': 'mail'}
+                }) }}
+				<div class="form-error"></div>
+			</div>
+			<div class="input-field">
+				{{ form_widget(form.mailConfirm) }}
+				{{ form_label(form.mailConfirm, 'mailConfirm', {
+                    'label_attr': {'class': 'mailConfirm'}
+                }) }}
+				<div class="form-error"></div>
+			</div>
+		</div>
+	</div>
+
+	<ul class="collapsible">
+		<li>
+			<div class="collapsible-header">
+				<i class="material-icons">markunread_mailbox</i>Adresse de livraison différente ?</div>
+
+			<div class="collapsible-body">
+				<div class="input-field">
+					{{ form_widget(form.delivery_adress.firstName) }}
+					{{ form_label(form.delivery_adress.firstName, 'firstName', {
+                    'label_attr': {'class': 'firstName'}
+                }) }}
+					<div class="form-error"></div>
+				</div>
+				<div class="input-field">
+					{{ form_widget(form.delivery_adress.lastName) }}
+					{{ form_label(form.delivery_adress.lastName, 'lastName', {
+                    'label_attr': {'class': 'lastName'}
+                }) }}
+					<div class="form-error"></div>
+				</div>
+				<div class="input-field">
+					{{ form_widget(form.delivery_adress.adress) }}
+					{{ form_label(form.delivery_adress.adress, 'adress', {
+                    'label_attr': {'class': 'adress'}
+                }) }}
+					<div class="form-error"></div>
+				</div>
+				<div class="input-field">
+					{{ form_widget(form.delivery_adress.otherAdress) }}
+					{{ form_label(form.delivery_adress.otherAdress, 'otherAdress', {
+                    'label_attr': {'class': 'otherAdress'}
+                }) }}
+					<div class="form-error"></div>
+				</div>
+				<div class="input-field">
+					{{ form_widget(form.delivery_adress.country) }}
+					{{ form_label(form.delivery_adress.country, 'country', {
+                    'label_attr': {'class': 'country'}
+                }) }}
+					<div class="form-error"></div>
+				</div>
+				<div class="input-field">
+					{{ form_widget(form.delivery_adress.postalCode) }}
+					{{ form_label(form.delivery_adress.postalCode, 'postalCode', {
+                    'label_attr': {'class': 'postalCode'}
+                }) }}
+					<div class="form-error"></div>
+				</div>
+				<div class="input-field">
+					{{ form_widget(form.delivery_adress.city) }}
+					{{ form_label(form.delivery_adress.city, 'city', {
+                    'label_attr': {'class': 'city'}
+                }) }}
+					<div class="form-error"></div>
+				</div>
+				<div class="input-field">
+					{{ form_widget(form.delivery_adress.phone) }}
+					{{ form_label(form.delivery_adress.phone, 'phone', {
+                    'label_attr': {'class': 'phone'}
+                }) }}
+					<div class="form-error"></div>
+				</div>
+			</div>
+		</li>
+	</ul>
+</div>
+
+
+{# Etape 3 #}
+<div class="card step_3">
+	<div class="card-content">
+		<span class="card-title color_product_primary center-align">Étape 3</span>
+		<p class="h6 center-align">Choisissez un paiement</p>
+		<ul class="collapsible">
+			<li class="active">
+				<div class="collapsible-header">
+					<i class="fas fa-credit-card"></i>Payer avec la Carte Bancaire</div>
+				<div class="collapsible-body card-form">
+					<div class="row">
+						<div class="center-align">
+							<button type="submit" name="method" value="stripe" class="btn-large btn-block waves-effect waves-light">Continuer</button>
+							<p>J'accepte les
+								<a href="https://feelwellshop.com/fr/conditions-generales-de-ventes" target="_blank">conditions générales de vente</a>
+							</p>
+							<img class="responsive-img monetico" src="assets/images/paiement-securise-stripe.jpeg" alt="Stripe protège vos achats">
+						</div>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="collapsible-header">
+					<i class="fab fa-cc-paypal"></i>Payer avec Paypal</div>
+				<div class="collapsible-body">
+					<div class="row">
+						<div class="center-align">
+							<button type="submit" name="method" value="paypal" class="btn-large btn-block waves-effect waves-light">Continuer sur PayPal</button>
+							<p>J'accepte les
+								<a href="https://feelwellshop.com/fr/conditions-generales-de-ventes" target="_blank">conditions générales de vente</a>
+							</p>
+						</div>
+					</div>
+				</div>
+			</li>
+		</ul>
+	</div>
+</div>
+
+{{ form_end(form) }}
+
+<script>
+
+	let stripe = Stripe("pk_test_51IuZljBeRLZv7zwmeH9MlMOKqSC7yRZKq33HA2cjY36w3yX99qUauppw3Np3n6jo2eE0iKwoScAkNFKR0JJz6F0O005Z6j2VtY");
+// The items the customer wants to buy
+let elements = stripe.elements();
+
+var style = {
+base: { // Add your base input styles here. For example:
+fontSize: '16px',
+color: '#32325d'
+}
+};
+
+// Create an instance of the card Element.
+var card = elements.create('card', {style: style});
+
+// Add an instance of the card Element into the `card-element` <div>.
+card.mount('#card-element');
+</script>

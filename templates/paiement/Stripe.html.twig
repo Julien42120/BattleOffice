@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+	<h1>Paiement Stripe</h1>
+
+	<div class="clearfix"></div>
+	<h5 class="center">Paiement</h5>
+	<div class="input-field col s12">
+		<input id="card_name" type="text" class="validate">
+		<label for="card_name">Nom sur la carte</label>
+	</div>
+	<div class="input-field col s12" id="card-element">
+		<input id="card_number" type="text" class="validate">
+		<label id="card-element" for="card_number">Numéro de la carte</label>
+	</div>
+
+
+{% endblock %}
+
+<script>
+
+	let stripe = Stripe("pk_test_51IuZljBeRLZv7zwmeH9MlMOKqSC7yRZKq33HA2cjY36w3yX99qUauppw3Np3n6jo2eE0iKwoScAkNFKR0JJz6F0O005Z6j2VtY");
+// The items the customer wants to buy
+let elements = stripe.elements();
+
+var style = {
+base: { // Add your base input styles here. For example:
+fontSize: '16px',
+color: '#32325d'
+}
+};
+
+// Create an instance of the card Element.
+var card = elements.create('card', {style: style});
+
+// Add an instance of the card Element into the `card-element` <div>.
+card.mount('#card-element');
+</script>

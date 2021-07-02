@@ -1,0 +1,102 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+	<h1>
+		Confirmation de commande
+	</h1>
+
+	<div class="row" style="text-align: center">
+		<div class="col-sm-6">
+			<h2 style="text-align:center" class="client">Adresse de Facturation</h2>
+			<table>
+				<tr>
+					<th>FirstName</th>
+					<td>{{ client.firstName }}</td>
+				</tr>
+				<tr>
+					<th>LastName</th>
+					<td>{{ client.lastName }}</td>
+				</tr>
+				<tr>
+					<th>Adress</th>
+					<td>{{ client.adress }}</td>
+				</tr>
+				<tr>
+					<th>OtherAdress</th>
+					<td>{{ client.otherAdress }}</td>
+				</tr>
+				<tr>
+					<th>City</th>
+					<td>{{ client.city }}</td>
+				</tr>
+				<tr>
+					<th>PostalCode</th>
+					<td>{{ client.postalCode }}</td>
+				</tr>
+				<tr>
+					<th>Country</th>
+					<td>{{ client.country }}</td>
+				</tr>
+				<tr>
+					<th>Phone</th>
+					<td>{{ client.phone }}</td>
+				</tr>
+			</table>
+		</div>
+		<div class="col-sm-6">
+			<h2 class="livraison">Adresse de livraison</h2>
+			<table>
+				<tr>
+					<th>FirstName</th>
+					<td>{{ deliveryAdress.firstName }}</td>
+				</tr>
+				<tr>
+					<th>LastName</th>
+					<td>{{ deliveryAdress.lastName }}</td>
+				</tr>
+				<tr>
+					<th>Adress</th>
+					<td>{{ deliveryAdress.adress }}</td>
+				</tr>
+				<tr>
+					<th>OtherAdress</th>
+					<td>{{ deliveryAdress.otherAdress }}</td>
+				</tr>
+				<tr>
+					<th>Country</th>
+					<td>{{ deliveryAdress.country }}</td>
+				</tr>
+				<tr>
+					<th>PostalCode</th>
+					<td>{{ deliveryAdress.postalCode }}</td>
+				</tr>
+				<tr>
+					<th>City</th>
+					<td>{{ deliveryAdress.city }}</td>
+				</tr>
+				<tr>
+					<th>Phone</th>
+					<td>{{ deliveryAdress.phone }}</td>
+				</tr>
+			</table>
+		</div>
+		<h2 class="produit">Détails du Produit</h2>
+		<div class="col-sm-12">
+			<table>
+
+				<tr>
+					<th>Name</th>
+					<td>{{ product.name }}</td>
+				</tr>
+				<tr>
+					<th>Picture</th>
+					<td><img src="{{ asset (product.picture) }}"></td>
+				</tr>
+				<tr>
+					<th>Price</th>
+					<td>{{ product.price / 100 }}</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>{% endblock %}

@@ -1,25 +1,44 @@
 {% extends 'base.html.twig' %}
 
-{% block body %}
-	<h1>Paiement Stripe</h1>
-
-	<div class="clearfix"></div>
-	<h5 class="center">Paiement</h5>
-	<div class="input-field col s12">
-		<input id="card_name" type="text" class="validate">
-		<label for="card_name">Nom sur la carte</label>
-	</div>
-	<div class="input-field col s12" id="card-element">
-		<input id="card_number" type="text" class="validate">
-		<label id="card-element" for="card_number">Numéro de la carte</label>
-	</div>
-
-
+{% block title %}New Paiement
 {% endblock %}
 
-<script>
+{% block body %}
 
-	let stripe = Stripe("pk_test_51IuZljBeRLZv7zwmeH9MlMOKqSC7yRZKq33HA2cjY36w3yX99qUauppw3Np3n6jo2eE0iKwoScAkNFKR0JJz6F0O005Z6j2VtY");
+	<form method="post" class="paiementstripe" action="{{ path ('stripe', {'id': id})}}">
+		<div class="clearfix"></div>
+		<h5 class="center">Paiement CB</h5>
+		<div
+			class="input-field col s12">
+
+			{# TODO Mettre l'input du participant id à la place  #}
+			<input type="hidden" name="amount" value="{{amount}}">
+			<input type="hidden" name="paymentApi" value="{{paymentApi}}">
+			<input id="card_name" type="text" class="validate">
+			<label for="card_name">Nom sur la carte</label>
+		</div>
+		<div class="input-field col s12" id="card-element">
+			<input id="card_number" type="text" class="validate">
+			<label id="card-element" for="card_number">Numéro de la carte</label>
+		</div>
+		<div class="row">
+			<div class="input-field col s12 l6">
+				<a href="#!" class="btn btn-large waves-effect waves-light grey col s12">Annuler</a>
+			</div>
+
+			<div class="input-field col s12 l6">
+				<button class="btn btn-large waves-effect waves-light lighten-1 col s12" type="submit" name="action">
+					Payer
+					<i class="material-icons right">euro_symbol</i>
+				</button>
+			</div>
+		</div>
+	</form>
+{% endblock %}
+
+{% block javascripts %}
+	<script>
+		let stripe = Stripe("pk_test_51IuwAFEHR08MdWvwKhCbOaT2odaZNHSwBQgUFgvb86dze0VxjuAAgTFdRF2k70jht1y4rsRNqnyhN9iXSRKkPPLw00bMYLfT5Y");
 // The items the customer wants to buy
 let elements = stripe.elements();
 
@@ -35,4 +54,7 @@ var card = elements.create('card', {style: style});
 
 // Add an instance of the card Element into the `card-element` <div>.
 card.mount('#card-element');
-</script>
+	</script>
+
+
+{% endblock %}

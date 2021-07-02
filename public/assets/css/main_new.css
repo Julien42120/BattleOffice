@@ -78,5 +78,16 @@ article .promo{
     transition: all 350ms ease-out;
 }
 
+.paiementstripe{
+    width: 50vw;
+    text-align: center;
+    margin:10vh auto;
+    height: auto;
+    background-color: #fff3957d;
+    padding: 2%;
+    border-radius: 5px;
+}
 
-
+.center{
+    font-weight: bold;
+}

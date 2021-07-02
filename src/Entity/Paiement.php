@@ -18,7 +18,7 @@ class Paiement
     private $id;
 
     /**
-     * @ORM\OneToOne(targetEntity=order::class, cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=Order::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $orders;
@@ -37,6 +37,11 @@ class Paiement
      * @ORM\Column(type="integer")
      */
     private $paiementApi;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $amount;
 
     public function getId(): ?int
     {
@@ -87,6 +92,18 @@ class Paiement
     public function setPaiementApi(int $paiementApi): self
     {
         $this->paiementApi = $paiementApi;
+
+        return $this;
+    }
+
+    public function getAmount(): ?int
+    {
+        return $this->amount;
+    }
+
+    public function setAmount(int $amount): self
+    {
+        $this->amount = $amount;
 
         return $this;
     }

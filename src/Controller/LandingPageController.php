@@ -8,12 +8,20 @@ use App\Entity\Order;
 use App\Entity\Paiement;
 use App\Entity\Product;
 use App\Form\ClientType;
+use App\Form\PaiementType;
+use App\Repository\ClientRepository;
+use App\Repository\DeliveryAdressRepository;
+use App\Repository\PaiementRepository;
 use App\Repository\ProductRepository;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Mime\Email;
 
 class LandingPageController extends AbstractController
 {
@@ -32,13 +40,6 @@ class LandingPageController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $productId = $request->get('product');
             $product = $productRepository->findOneBy(['id' => $productId]);
-            // $paiementStripe = $request->get('stripe');
-            // $paiementPayPal = $request->get('paypal');
-
-            // if paiementmeth = stripe 
-            // return sur la route stripe
-            // else 
-            // return sur la paypal;
 
             if ($client->getDeliveryAdress()->getFirstName() == null && $client->getDeliveryAdress()->getLastName() == null && $client->getDeliveryAdress()->getAdress() == null && $client->getDeliveryAdress()->getOtherAdress() == null && $client->getDeliveryAdress()->getPostalCode() == null && $client->getDeliveryAdress()->getCity() == null && $client->getDeliveryAdress()->getPhone() == null) {
                 $delivery_adress =  $this->initDeleveryAdress($client); // Check function on bottom
@@ -49,7 +50,8 @@ class LandingPageController extends AbstractController
             $entityManager->flush();
             $order->setClient($client);
             $order->setProduct($product);
-            $order->setFacturationAdress($client);
+
+
             $order->setDeliveryAdress($client->getDeliveryAdress());
 
             // SEND ORDER IN DATABASE 
@@ -59,14 +61,27 @@ class LandingPageController extends AbstractController
             $payment = new Paiement();
             $payment->setOrders($order);
             $payment->setPaiementStatus('WAITING');
-            $payment->setMethod('paypal');
+            $payment->setMethod('stripe');
+            $payment->setAmount($product->getPrice());
 
             $content =  $this->httpClient($client, $product, $payment, $order);
             $payment->setPaiementApi($content['order_id']);
+            $paiementMethod = $payment->getMethod();
 
+            $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($payment);
             $entityManager->flush();
-            return $this->redirectToRoute('landing_page');
+
+            if ($paiementMethod === 'stripe') {
+                return $this->redirectToRoute('stripe', [
+                    'id' => $order->getId(),
+                    'paymentApi' => $payment->getPaiementApi(),
+                ]);
+            } else {
+                return $this->redirectToRoute('paypal', [
+                    'id' => $order->getId()
+                ]);
+            }
         }
 
         return $this->render('landing_page/index.html.twig', [
@@ -135,11 +150,11 @@ class LandingPageController extends AbstractController
     /**
      * @Route("/confirmation", name="confirmation")
      */
-    public function confirmation()
+    public function confirmation(MailerInterface $mailer)
     {
+
         return $this->render('landing_page/confirmation.html.twig', []);
     }
-
 
     public function initDeleveryAdress($client)
     {
@@ -152,5 +167,85 @@ class LandingPageController extends AbstractController
         $client->getDeliveryAdress()->setCity($client->getCity());
         $client->getDeliveryAdress()->setPhone($client->getPhone());
         return $client->getDeliveryAdress();
+    }
+
+    /**
+     * @Route("/stripe/{id}", name="stripe", methods={"GET","POST"})
+     */
+    public function stripe(Request $request, Order $order, ProductRepository $productRepository, PaiementRepository $paiementRepository, ClientRepository $clientRepository, DeliveryAdressRepository $deliveryAdressRepository, MailerInterface $mailer): Response
+    {
+        $product = $productRepository->findOneBy(['id' => $order->getProduct()]);
+        $paymentApi = $request->get('paymentApi');
+        $paiement = $paiementRepository->findOneBy(['paiementApi' => $paymentApi]);
+        $delivery = $deliveryAdressRepository->findOneBy(['id' => $paiement->getOrders()->getDeliveryAdress()]);
+        $client = $clientRepository->findOneBy(['id' => $paiement->getOrders()->getClient()]);
+
+        $paiement->setAmount($product->getPrice() - $product->getReduction() * 100);
+
+        if ($request->isMethod('post')) {
+
+            \Stripe\Stripe::setApiKey('sk_test_51IuZljBeRLZv7zwma4Vf5nWy7Vzxl6zoJ2AI8pj2sZyVwxzQx7dYeBjmEjLVKa7crxrsXgoHNhpyts9x4fJJkXic00qkZkziNf');
+            $paymentIntent = \Stripe\PaymentIntent::create([
+                'amount' => $paiement->getAmount(),
+                'currency' => 'eur',
+            ]);
+
+            $data = ["status" => "PAID"];
+            $data = json_encode($data);
+
+            $token = 'mJxTXVXMfRzLg6ZdhUhM4F6Eutcm1ZiPk4fNmvBMxyNR4ciRsc8v0hOmlzA0vTaX';
+
+            $httpClient = HttpClient::create([]);
+            $response = $httpClient->request('POST', 'https://api-commerce.simplon-roanne.com/order/' . $paiement->getPaiementApi() . "/status", [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $token,
+                    'Content-Type' => 'application/json',
+                ],
+                'body' => $data
+            ]);
+            $statusCode = $response->getStatusCode();
+            $contentType = $response->getHeaders()['content-type'][0];
+            $content = $response->getContent();
+            $content = $response->toArray();
+
+            $paiement->setPaiementStatus("PAID");
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($paiement);
+            $entityManager->flush();
+            $this->sendEmail($mailer, $client, $delivery, $product);
+            //redirection
+            return $this->redirectToRoute('confirmation');
+        }
+
+        return $this->render('paiement/Stripe.html.twig', [
+            'paiement' => $paiement,
+            'amount' => $product->getPrice(),
+            'id' => $order->getId(),
+            'paymentApi' => $paymentApi
+        ]);
+    }
+
+    public function sendEmail(MailerInterface $mailer, Client $client, DeliveryAdress $deliveryAdress, Product $product)
+    {
+
+
+        $email = (new TemplatedEmail())
+            ->from('fabien@example.com')
+            ->to(new Address('ryan@example.com'))
+            ->subject('Thanks for signing up!')
+
+            // path of the Twig template to render
+            ->htmlTemplate('landing_page/mail.html.twig')
+
+            // pass variables (name => value) to the template
+            ->context([
+                'client' => $client,
+                'deliveryAdress' => $deliveryAdress,
+                'product' => $product,
+                'expiration_date' => new \DateTime('+7 days'),
+                'username' => 'foo',
+            ]);
+
+        $mailer->send($email);
     }
 }
